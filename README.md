@@ -1,9 +1,6 @@
 # scrappy
 A small, crappy text editor. Maybe it'll grow up to be a real boy.
 
-# License
-MIT. I'm trying to get a license file added.
-
 # Current features
 It can manipulate the clipboard, read and write files, and has an about screen.
 
