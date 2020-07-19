@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install -y libfltk1.3 libfltk-gl1.3
+      run: sudo apt-get update && sudo apt-get install -y libfltk1.3-dev libfltk-gl1.3 xorg-dev
     - name: Build
       run: cargo build --verbose
     - name: Run tests
