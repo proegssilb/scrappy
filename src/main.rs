@@ -2,7 +2,6 @@
 
 use fltk::app::*;
 
-mod editordocument;
 mod editorview;
 
 use editorview::EditorView;
