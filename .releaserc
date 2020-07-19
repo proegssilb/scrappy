@@ -1,0 +1,33 @@
+plugins:
+  - - "@semantic-release/commit-analyzer"
+    - preset: ember
+      releaseRules:
+        - breaking: true
+          release: major
+        - revert: true
+          release: patch
+        - type: docs
+          scope: README
+          release: false
+        - type: refactor
+          scope: core-*
+          release: minor
+        - type: refactor
+          release: patch
+        - type: style
+          release: patch
+  - - "@semantic-release/release-notes-generator"
+    - preset: ember
+  - - "@google/semantic-release-replace-plugin"
+    - files: ["cargo.toml"]
+      from: "version = \".*\""
+      to: "version = \"${nextRelease.version}\""
+      results:
+        - file: "cargo.toml"
+          hasChanged: true
+          numMatches: 1
+          numReplacements: 1
+  - - "@semantic-release/git"
+    - assets: ["cargo.toml"]
+  - - "@semantic-release/github"
+    - assets: .binaries/

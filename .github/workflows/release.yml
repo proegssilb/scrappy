@@ -11,9 +11,7 @@ env:
 
 jobs:
   linux:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Install dependencies
@@ -29,9 +27,7 @@ jobs:
         path: target/release/scrappy
 
   windows:
-
     runs-on: windows-2019
-
     steps:
       - uses: actions/checkout@v2
       - name: Build
@@ -43,3 +39,24 @@ jobs:
         with:
           name: scrappy-windows.exe
           path: target/release/scrappy.exe
+  
+  release:
+    runs-on: ubuntu-latest
+    needs:
+      - windows
+      - linux
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          path: .binaries/
+      - name: Do Release
+        uses: cycjimmy/semantic-release-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          semantic_version: 17.1.1
+          dry_run: ${{ github.ref != 'refs/heads/master' }}
+          extra_plugins: |
+            @google/semantic-release-replace-plugin
+            @semantic-release/git
