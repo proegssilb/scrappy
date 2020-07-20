@@ -60,3 +60,4 @@ jobs:
           extra_plugins: |
             @google/semantic-release-replace-plugin
             @semantic-release/git
+            conventional-changelog-ember
