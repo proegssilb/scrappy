@@ -20,7 +20,7 @@ jobs:
       - name: Dev Build - Install dependencies
         run: sudo apt-get update && sudo apt-get install -y libfltk1.3-dev libfltk-gl1.3 xorg-dev
       - name: Dev Build - Build
-        run: cargo build --release --verbose
+        run: cargo build --verbose
       - name: Dev Build - Run tests
         run: cargo test --verbose
       - name: Commit Cargo.lock if build succeeds
