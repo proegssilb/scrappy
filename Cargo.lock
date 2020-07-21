@@ -17,9 +17,9 @@ dependencies = [
 
 [[package]]
 name = "fltk"
-version = "0.7.14"
+version = "0.7.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5677a4280715c87d7f55023762e98d410d7fa3cef0c27e4a833ef86f856d4f3f"
+checksum = "4f17987c8493baf831fcf06e44fb91efacb04c007fbd7d068bf805e199b2242c"
 dependencies = [
  "fltk-derive",
  "fltk-sys",
@@ -27,9 +27,9 @@ dependencies = [
 
 [[package]]
 name = "fltk-derive"
-version = "0.7.14"
+version = "0.7.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1ac45262fe84387f9b08607578e8edb90adf1dac50b53e703709f417ec8c6466"
+checksum = "2bcbb136e26093754c62d8bcac38926b26bae8d56fa7927b02d62b2b3025d26f"
 dependencies = [
  "quote",
  "syn",
@@ -37,18 +37,18 @@ dependencies = [
 
 [[package]]
 name = "fltk-sys"
-version = "0.7.14"
+version = "0.7.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a096659f386cbf5d456f499d6df8ff43862ea6df33f59ca69d9275ef44df91cd"
+checksum = "68efe574f266632aa6afe9567f787ce34134f9c98fa4a929d25ac96e31f8316d"
 dependencies = [
  "cmake",
 ]
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.18"
+version = "1.0.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "beae6331a816b1f65d04c45b078fd8e6c93e8071771f41b8163255bbd8d7c8fa"
+checksum = "04f5f085b5d71e2188cb8271e5da0161ad52c3f227a661a3c135fdf28e258b12"
 dependencies = [
  "unicode-xid",
 ]
@@ -71,9 +71,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "1.0.34"
+version = "1.0.35"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "936cae2873c940d92e697597c5eee105fb570cd5689c695806f672883653349b"
+checksum = "fb7f4c519df8c117855e19dd8cc851e89eb746fe7a73f0157e0d95fdec5369b0"
 dependencies = [
  "proc-macro2",
  "quote",
