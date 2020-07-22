@@ -1,4 +1,4 @@
-name: Rust Release Builds
+name: Rust Package Updates
 
 on:
   schedule:
