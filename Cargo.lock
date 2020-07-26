@@ -67,7 +67,12 @@ name = "scrappy"
 version = "0.1.0"
 dependencies = [
  "fltk",
+ "scrappy_core",
 ]
+
+[[package]]
+name = "scrappy_core"
+version = "0.1.0"
 
 [[package]]
 name = "syn"
