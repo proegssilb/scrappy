@@ -16,6 +16,19 @@ plugins:
           release: patch
         - type: style
           release: patch
+        - type: feat
+          release: minor
+        - type: feature
+          release: minor
+        - type: bug
+          release: patch
+        - type: patch
+          release: patch
+        - type: minor
+          release: minor
+        - type: major
+          release: major
+          
   - - "@semantic-release/release-notes-generator"
     - preset: ember
   - - "@google/semantic-release-replace-plugin"
