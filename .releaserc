@@ -32,11 +32,15 @@ plugins:
   - - "@semantic-release/release-notes-generator"
     - preset: ember
   - - "@google/semantic-release-replace-plugin"
-    - files: ["cargo.toml"]
+    - files: ["Cargo.toml", "scrappy_core/Cargo.toml"]
       from: "version = \".*\""
       to: "version = \"${nextRelease.version}\""
       results:
-        - file: "cargo.toml"
+        - file: "Cargo.toml"
+          hasChanged: true
+          numMatches: 1
+          numReplacements: 1
+        - file: "scrappy_core/Cargo.toml"
           hasChanged: true
           numMatches: 1
           numReplacements: 1
