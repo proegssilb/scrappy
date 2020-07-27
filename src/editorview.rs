@@ -189,7 +189,7 @@ impl EditorView {
     fn initialize_menu(&mut self) {
         self.menu_bar.add_emit(
             "File/New...",
-            Shortcut::Ctrl + 'n',
+            Shortcut::Ctrl | 'n',
             MenuFlag::Normal,
             self.event_sender,
             Message::New,
@@ -197,7 +197,7 @@ impl EditorView {
 
         self.menu_bar.add_emit(
             "File/Open...",
-            Shortcut::Ctrl + 'o',
+            Shortcut::Ctrl | 'o',
             MenuFlag::Normal,
             self.event_sender,
             Message::Open,
@@ -205,7 +205,7 @@ impl EditorView {
 
         self.menu_bar.add_emit(
             "File/Save",
-            Shortcut::Ctrl + 's',
+            Shortcut::Ctrl | 's',
             MenuFlag::Normal,
             self.event_sender,
             Message::Save,
@@ -229,7 +229,7 @@ impl EditorView {
 
         self.menu_bar.add_emit(
             "Edit/Cut",
-            Shortcut::Ctrl + 'x',
+            Shortcut::Ctrl | 'x',
             MenuFlag::Normal,
             self.event_sender,
             Message::Cut,
@@ -237,7 +237,7 @@ impl EditorView {
 
         self.menu_bar.add_emit(
             "Edit/Copy",
-            Shortcut::Ctrl + 'c',
+            Shortcut::Ctrl | 'c',
             MenuFlag::Normal,
             self.event_sender,
             Message::Copy,
@@ -245,7 +245,7 @@ impl EditorView {
 
         self.menu_bar.add_emit(
             "Edit/Paste",
-            Shortcut::Ctrl + 'v',
+            Shortcut::Ctrl | 'v',
             MenuFlag::Normal,
             self.event_sender,
             Message::Paste,
