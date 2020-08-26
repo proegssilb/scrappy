@@ -1,30 +1,52 @@
-use std::io::Result as IoResult;
-use std::rc::Rc;
 use std::sync::mpsc::Sender;
 
+// TODO: Figure out how to better handle the return value of lines()
 pub trait Document {
-    fn save(self) -> IoResult<bool>;
-    fn save_as(self, path: &str) -> IoResult<bool>;
+    type LinesIterator: Iterator<Item=String>;
 
     fn cursor_loc(self) -> Loc;
-    fn text(self) -> Rc<str>;
+    fn lines(self) -> Self::LinesIterator;
+    fn selection(self) -> Option<Selection>;
+    fn is_modified(self) -> bool;
 
-    fn edits_channel(self) -> Sender<DocumentEdits>;
-    fn register_listener(self, channel: Sender<DocumentEvents>);
+    fn edits_channel(self) -> Sender<DocumentEdit>;
 }
 
-pub enum DocumentEdits {
+#[derive(Clone, Debug)]
+pub enum DocumentEdit {
+    Close,
     InsertChar(Loc, char),
     InsertStr(Loc, String),
+    Delete(Selection),
     MoveCursor(Direction),
-    MoveCursotTo(Loc),
+    MoveCursorTo(Loc),
+    SetSelectionMode(SelectionMode),
+    AddListener(Sender<DocumentEvent>),
+    Save,
+    SaveAs(String),
 }
 
-pub enum DocumentEvents {
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct Selection {
+    pub start: Loc,
+    pub end: Loc,
+    pub text: String,
+}
+
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+pub enum SelectionMode {
+    None,
+    Selecting,
+    Selected
+}
+
+#[derive(Clone, Debug)]
+pub enum DocumentEvent {
     LineChanged(String, String),
     CursorMoved(Loc, Loc, Option<Direction>)
 }
 
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum Direction {
     Up,
     Down,
@@ -32,7 +54,8 @@ pub enum Direction {
     Right,
 }
 
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub struct Loc {
-    pub line: u32,
-    pub col: u32,
+    pub line: usize,
+    pub col: usize,
 }

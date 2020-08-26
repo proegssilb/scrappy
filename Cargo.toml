@@ -9,3 +9,6 @@ edition = "2018"
 [dependencies]
 fltk = { version = "^0.7", features = ["fltk-bundled"] }
 scrappy_core = { path = "scrappy_core" }
+
+[dev-dependencies]
+proptest = "^0.10"
