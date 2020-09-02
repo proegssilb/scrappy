@@ -11,4 +11,4 @@ fltk = { version = "^0.7", features = ["fltk-bundled"] }
 scrappy_core = { path = "scrappy_core" }
 
 [dev-dependencies]
-proptest = "^0.10"
+fake = { version = "2.2", features=['derive', 'chrono']}
