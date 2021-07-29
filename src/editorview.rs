@@ -1,13 +1,15 @@
+
 use fltk::{
-    app::*,
-    button::*,
-    dialog::*,
-    input::*,
-    menu::*,
-    text::{TextBuffer, TextEditor},
-    window::Window,
+    app, dialog,
+    enums::{CallbackTrigger, Color, Event, Font, Shortcut},
+    menu,
+    prelude::*,
+    text, window, input, button
 };
-use std::{fs, path};
+use std::{
+    fs,
+    path,
+};
 
 #[derive(Copy, Clone)]
 pub enum Message {
@@ -24,36 +26,36 @@ pub enum Message {
 }
 
 pub struct SearchReplaceDialog {
-    dialog: Window,
-    find_text: Input,
-    replace_text: Input,
-    find_next: Button,
-    replace: Button,
-    replace_all: Button,
-    cancel: Button,
+    dialog: window::Window,
+    find_text: input::Input,
+    replace_text: input::Input,
+    find_next: button::Button,
+    replace: button::Button,
+    replace_all: button::Button,
+    cancel: button::Button,
 }
 
 pub struct EditorView {
-    menu_bar: MenuBar,
-    event_sender: Sender<Message>,
-    event_receiver: Receiver<Message>,
-    window: Window,
-    editor: TextEditor,
+    menu_bar: menu::SysMenuBar,
+    event_sender: app::Sender<Message>,
+    event_receiver: app::Receiver<Message>,
+    window: window::Window,
+    editor: text::TextEditor,
     saved: bool,
     filename: String,
 }
 
 impl EditorView {
     pub fn new() -> EditorView {
-        let (s, r) = channel::<Message>();
-        let wind = Window::default()
+        let (s, r) = app::channel::<Message>();
+        let wind = window::Window::default()
             .with_size(800, 600)
             .center_screen()
             .with_label("Scrappy");
-        let mut editor = TextEditor::new(5, 40, wind.width() - 10, wind.height() - 45, "");
-        editor.set_buffer(Some(TextBuffer::default()));
+        let mut editor = text::TextEditor::new(5, 40, wind.width() - 10, wind.height() - 45, "");
+        editor.set_buffer(Some(text::TextBuffer::default()));
         EditorView {
-            menu_bar: MenuBar::new(0, 0, wind.width(), 40, ""),
+            menu_bar: menu::SysMenuBar::default(),
             event_sender: s,
             event_receiver: r,
             window: wind,
@@ -80,29 +82,29 @@ impl EditorView {
 
         let s = self.event_sender.clone();
 
-        self.window.set_callback(Box::new(move || {
-            if event() == Event::Close {
+        self.window.set_callback(move |_| {
+            if app::event() == Event::Close {
                 s.send(Message::Quit);
             }
-        }));
+        });
     }
 
-    pub fn loop_step(&mut self, app: App) {
+    pub fn loop_step(&mut self, app: app::App) {
         use Message::*;
         match self.event_receiver.recv() {
             Some(msg) => match msg {
                 Changed => self.saved = false,
                 New => {
                     if self.editor.buffer().unwrap().text() != "" {
-                        let x = choice(200, 200, "File unsaved, Do you wish to continue?", "Yes", "No!", "");
+                        let x = dialog::choice(200, 200, "File unsaved, Do you wish to continue?", "Yes", "No!", "");
                         if x == 0 {
                             self.editor.buffer().unwrap().set_text("");
                         }
                     }
                 },
                 Open => {
-                    let mut dlg = FileDialog::new(FileDialogType::BrowseFile);
-                    dlg.set_option(FileDialogOptions::NoOptions);
+                    let mut dlg = dialog::FileDialog::new(dialog::FileDialogType::BrowseFile);
+                    dlg.set_option(dialog::FileDialogOptions::NoOptions);
                     dlg.set_filter("*.txt");
                     dlg.show();
                     self.set_filename(&dlg.filename().to_string_lossy().to_string());
@@ -116,7 +118,7 @@ impl EditorView {
                                 .unwrap()
                                 .as_str(),
                         ),
-                        false => alert(200, 200, "File does not exist!"),
+                        false => dialog::alert(200, 200, "File does not exist!"),
                     }
                 },
                 Save => self.save_file(),
@@ -126,7 +128,7 @@ impl EditorView {
                 },
                 Quit => {
                     if !self.saved {
-                        let x = choice(200, 200, "Would you like to save your work?", "Yes", "No", "");
+                        let x = dialog::choice(200, 200, "Would you like to save your work?", "Yes", "No", "");
                         if x == 0 {
                             self.save_file();
                             app.quit();
@@ -140,7 +142,7 @@ impl EditorView {
                 Cut => self.editor.cut(),
                 Copy => self.editor.copy(),
                 Paste => self.editor.paste(),
-                About => message(200, 200, "Scrappy is a small, crappy text editor. It includes large swathes of code from https://github.com/MoAlyousef/fltk-rs/blob/master/examples/editor.rs.",),
+                About => dialog::message(200, 200, "Scrappy is a small, crappy text editor. It includes large swathes of code from https://github.com/MoAlyousef/fltk-rs/blob/master/examples/editor.rs.",),
             },
             _ => ()
         }
@@ -150,8 +152,8 @@ impl EditorView {
         let mut filename = self.filename.clone();
         if self.saved {
             if filename.is_empty() {
-                let mut dlg = FileDialog::new(FileDialogType::BrowseSaveFile);
-                dlg.set_option(FileDialogOptions::SaveAsConfirm);
+                let mut dlg = dialog::FileDialog::new(dialog::FileDialogType::BrowseSaveFile);
+                dlg.set_option(dialog::FileDialogOptions::SaveAsConfirm);
                 dlg.show();
                 filename = dlg.filename().to_string_lossy().to_string();
                 if filename.is_empty() {
@@ -162,7 +164,7 @@ impl EditorView {
                         fs::write(&filename, self.editor.buffer().unwrap().text()).unwrap();
                         self.saved = true;
                     }
-                    false => alert(200, 200, "Please specify a file!"),
+                    false => dialog::alert(200, 200, "Please specify a file!"),
                 }
             } else {
                 match path::Path::new(&filename).exists() {
@@ -170,12 +172,12 @@ impl EditorView {
                         fs::write(&filename, self.editor.buffer().unwrap().text()).unwrap();
                         self.saved = true;
                     }
-                    false => alert(200, 200, "Please specify a file!"),
+                    false => dialog::alert(200, 200, "Please specify a file!"),
                 }
             }
         } else {
-            let mut dlg = FileDialog::new(FileDialogType::BrowseSaveFile);
-            dlg.set_option(FileDialogOptions::SaveAsConfirm);
+            let mut dlg = dialog::FileDialog::new(dialog::FileDialogType::BrowseSaveFile);
+            dlg.set_option(dialog::FileDialogOptions::SaveAsConfirm);
             dlg.show();
             filename = dlg.filename().to_string_lossy().to_string();
             if filename.is_empty() {
@@ -190,7 +192,7 @@ impl EditorView {
         self.menu_bar.add_emit(
             "File/New...",
             Shortcut::Ctrl | 'n',
-            MenuFlag::Normal,
+            menu::MenuFlag::Normal,
             self.event_sender,
             Message::New,
         );
@@ -198,7 +200,7 @@ impl EditorView {
         self.menu_bar.add_emit(
             "File/Open...",
             Shortcut::Ctrl | 'o',
-            MenuFlag::Normal,
+            menu::MenuFlag::Normal,
             self.event_sender,
             Message::Open,
         );
@@ -206,7 +208,7 @@ impl EditorView {
         self.menu_bar.add_emit(
             "File/Save",
             Shortcut::Ctrl | 's',
-            MenuFlag::Normal,
+            menu::MenuFlag::Normal,
             self.event_sender,
             Message::Save,
         );
@@ -214,7 +216,7 @@ impl EditorView {
         self.menu_bar.add_emit(
             "File/Save as...",
             Shortcut::None,
-            MenuFlag::MenuDivider,
+            menu::MenuFlag::MenuDivider,
             self.event_sender,
             Message::SaveAs,
         );
@@ -222,7 +224,7 @@ impl EditorView {
         self.menu_bar.add_emit(
             "File/Quit",
             Shortcut::None,
-            MenuFlag::Normal,
+            menu::MenuFlag::Normal,
             self.event_sender,
             Message::Quit,
         );
@@ -230,7 +232,7 @@ impl EditorView {
         self.menu_bar.add_emit(
             "Edit/Cut",
             Shortcut::Ctrl | 'x',
-            MenuFlag::Normal,
+            menu::MenuFlag::Normal,
             self.event_sender,
             Message::Cut,
         );
@@ -238,7 +240,7 @@ impl EditorView {
         self.menu_bar.add_emit(
             "Edit/Copy",
             Shortcut::Ctrl | 'c',
-            MenuFlag::Normal,
+            menu::MenuFlag::Normal,
             self.event_sender,
             Message::Copy,
         );
@@ -246,7 +248,7 @@ impl EditorView {
         self.menu_bar.add_emit(
             "Edit/Paste",
             Shortcut::Ctrl | 'v',
-            MenuFlag::Normal,
+            menu::MenuFlag::Normal,
             self.event_sender,
             Message::Paste,
         );
@@ -254,7 +256,7 @@ impl EditorView {
         self.menu_bar.add_emit(
             "Help/About",
             Shortcut::None,
-            MenuFlag::Normal,
+            menu::MenuFlag::Normal,
             self.event_sender,
             Message::About,
         );
