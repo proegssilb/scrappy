@@ -10,7 +10,7 @@ fn main() {
     let app = App::default();
     let mut view = EditorView::new();
     view.initialize();
-    while app.wait().expect("Couldn't run editor!") {
+    while app.wait() {
         view.loop_step(app);
     }
 }
