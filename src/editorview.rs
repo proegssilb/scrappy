@@ -1,15 +1,11 @@
-
 use fltk::{
-    app, dialog,
+    app, button, dialog,
     enums::{CallbackTrigger, Color, Event, Font, Shortcut},
-    menu,
+    input, menu,
     prelude::*,
-    text, window, input, button
+    text, window,
 };
-use std::{
-    fs,
-    path,
-};
+use std::{fs, path};
 
 #[derive(Copy, Clone)]
 pub enum Message {
