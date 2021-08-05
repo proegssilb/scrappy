@@ -45,6 +45,7 @@ plugins:
   - - "@semantic-release/github"
     - assets: .binaries/
 branches:
-  - master
-  - alpha
-  - beta
+  - name: master
+  - name: beta
+    channel: beta
+    prerelease: beta
