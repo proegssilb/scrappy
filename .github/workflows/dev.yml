@@ -3,6 +3,8 @@ name: Rust Dev Builds
 on:
   push:
     branches: [ '!master' ]
+  pull_request:
+    branches: [ "*" ]
 
 env:
   CARGO_TERM_COLOR: always
