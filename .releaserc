@@ -44,3 +44,7 @@ plugins:
     - assets: ["cargo.toml"]
   - - "@semantic-release/github"
     - assets: .binaries/
+branches:
+  - master
+  - alpha
+  - beta
