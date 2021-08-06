@@ -18,7 +18,7 @@ jobs:
         id: update
         run: cargo update
       - name: Dev Build - Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y libfltk1.3-dev libfltk-gl1.3 xorg-dev
+        run: sudo apt-get update && sudo apt-get install -y libfltk1.3-dev libfltk-gl1.3 xorg-dev libpango1.0-dev librust-pangocairo-dev libpangoxft-1.0
       - name: Dev Build - Build
         run: cargo build --verbose
       - name: Dev Build - Run tests
