@@ -25,23 +25,21 @@ dependencies = [
 
 [[package]]
 name = "fltk"
-version = "1.1.12"
+version = "1.1.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6bf356f493316a45a5b90b8d5db97c0fd9850b87ab19cc7f88b53ca5d01fd710"
+checksum = "33068f5043ef838b1d749e6e5100ad2845e8d5df65ddbf87ece56dd2b3b4b6f5"
 dependencies = [
  "bitflags",
  "fltk-derive",
  "fltk-sys",
- "lazy_static",
- "objc",
  "raw-window-handle",
 ]
 
 [[package]]
 name = "fltk-derive"
-version = "1.1.12"
+version = "1.1.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "57ddbb2cb93484b56da41b80c1466bca2620b68b61847d5e7f999bda0782ab78"
+checksum = "93ecc656b6e61b0100ae96d975c47dcc79692599a877340460bbd521c80a31eb"
 dependencies = [
  "quote",
  "syn",
@@ -49,43 +47,18 @@ dependencies = [
 
 [[package]]
 name = "fltk-sys"
-version = "1.1.12"
+version = "1.1.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ebe424d107ab6ef0a4b756295c259bb8cec6e610548d55481457309884d526d4"
+checksum = "3d9b6bf78eae4c8587d50d15470e7f3a114cd35900bfceee7a0366c5df11dae0"
 dependencies = [
  "cmake",
- "libc",
 ]
-
-[[package]]
-name = "lazy_static"
-version = "1.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "libc"
 version = "0.2.101"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3cb00336871be5ed2c8ed44b60ae9959dc5b9f08539422ed43f09e34ecaeba21"
-
-[[package]]
-name = "malloc_buf"
-version = "0.0.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "62bb907fe88d54d8d9ce32a3cceab4218ed2f6b7d35617cafe9adf84e43919cb"
-dependencies = [
- "libc",
-]
-
-[[package]]
-name = "objc"
-version = "0.2.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "915b1b472bc21c53464d6c8461c9d3af805ba1ef837e1cac254428f4a77177b1"
-dependencies = [
- "malloc_buf",
-]
 
 [[package]]
 name = "proc-macro2"
