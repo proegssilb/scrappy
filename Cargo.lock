@@ -28,6 +28,7 @@ name = "fltk"
 version = "1.1.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "75a7e297a9b729d5ac4720380e7ef4707513d24752858b830ca4807e65d2e725"
+
 dependencies = [
  "bitflags",
  "fltk-derive",
