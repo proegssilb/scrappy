@@ -10,9 +10,9 @@ checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
 
 [[package]]
 name = "cc"
-version = "1.0.71"
+version = "1.0.72"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "79c2681d6594606957bbb8631c4b90a7fcaaa72cdb714743a437b156d6a7eedd"
+checksum = "22a9137b95ea06864e018375b72adfb7db6e6f68cfc8df5a04d00288050485ee"
 
 [[package]]
 name = "cmake"
@@ -25,9 +25,9 @@ dependencies = [
 
 [[package]]
 name = "fltk"
-version = "1.2.14"
+version = "1.2.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d7be9e2d498d59dd10ac484a5e73c0e3d2c6710357c45288d9c73929ce33f98d"
+checksum = "9480f6742b6ba50cbfb8e016c987f8d3e2faa79c0624e22f934d80c747c62e18"
 dependencies = [
  "bitflags",
  "fltk-sys",
