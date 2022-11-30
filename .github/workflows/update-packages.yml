@@ -31,7 +31,7 @@ jobs:
           file_pattern: Cargo.lock
       - name: Create a broken PR if build failed
         if: ${{ failure() }}
-        uses: peter-evans/create-pull-request@v2
+        uses: peter-evans/create-pull-request@v4
         with:
           commit-message: "[minor packages] Automatic package updates - build failed"
           title: "Package update failed"
