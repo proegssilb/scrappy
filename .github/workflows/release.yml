@@ -13,7 +13,7 @@ jobs:
   linux:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Install dependencies
       run: sudo apt-get update && sudo apt-get install -y libfltk1.3-dev libfltk-gl1.3 xorg-dev libpango1.0-dev librust-pangocairo-dev libpangoxft-1.0
     - name: Build
@@ -21,7 +21,7 @@ jobs:
     - name: Run tests
       run: cargo test --verbose
     - name: Upload binary
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: scrappy-linux
         path: target/release/scrappy
@@ -29,13 +29,13 @@ jobs:
   windows:
     runs-on: windows-2019
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Build
         run: cargo build --release --verbose
       - name: Run tests
         run: cargo test --verbose
       - name: Upload binary
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: scrappy-windows.exe
           path: target/release/scrappy.exe
@@ -48,11 +48,11 @@ jobs:
       - linux
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           path: .binaries/
       - name: Do Release
-        uses: cycjimmy/semantic-release-action@v2
+        uses: cycjimmy/semantic-release-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
