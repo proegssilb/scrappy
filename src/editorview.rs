@@ -92,8 +92,8 @@ impl EditorView {
                 Changed => self.saved = false,
                 New => {
                     if self.editor.buffer().unwrap().text() != "" {
-                        let x = dialog::choice(200, 200, "File unsaved, Do you wish to continue?", "Yes", "No!", "");
-                        if x == 0 {
+                        let x = dialog::choice2(200, 200, "File unsaved, Do you wish to discard your changes and create a new document?", "Yes, discard changes", "No, keep the existing document", "");
+                        if x == Some(0) {
                             self.editor.buffer().unwrap().set_text("");
                         }
                     }
@@ -124,12 +124,14 @@ impl EditorView {
                 },
                 Quit => {
                     if !self.saved {
-                        let x = dialog::choice(200, 200, "Would you like to save your work?", "Yes", "No", "");
-                        if x == 0 {
-                            self.save_file();
-                            app.quit();
-                        } else {
-                            app.quit();
+                        let x = dialog::choice2(200, 200, "Would you like to save your work?", "Yes, save the open file", "No, discard changes", "Cancel, don't exit");
+                        match x {
+                            Some(0) => {
+                                self.save_file();
+                                app.quit();
+                            }
+                            Some(1) => { app.quit(); }
+                            _ => { }
                         }
                     } else {
                         app.quit();
