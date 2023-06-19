@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install -y libfltk1.3-dev libfltk-gl1.3 xorg-dev libpango1.0-dev librust-pangocairo-dev libpangoxft-1.0
+      run: sudo apt-get update && sudo apt-get install -y libfltk1.3-dev libfltk-gl1.3 xorg-dev libpango1.0-dev librust-pangocairo-dev libpangoxft-1.0 libwayland-dev libxkbcommon-dev libdbus-1-dev
     - name: Build
       run: cargo build --verbose
     - name: Run tests
