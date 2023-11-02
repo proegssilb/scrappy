@@ -7,4 +7,4 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-fltk = { version = "^1.4.14", features = ["fltk-bundled", "use-wayland"]}
+fltk = { version = "^1.4.16", features = ["fltk-bundled", "use-wayland"]}
