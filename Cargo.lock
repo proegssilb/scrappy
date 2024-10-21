@@ -10,9 +10,12 @@ checksum = "6dbe3c979c178231552ecba20214a8272df4e09f232a87aef4320cf06539aded"
 
 [[package]]
 name = "cc"
-version = "1.0.79"
+version = "1.1.31"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "50d30906286121d95be3d479533b458f87493b30a4b5f79a607db8f5d11aa91f"
+checksum = "c2e7962b54006dcfcc61cb72735f4d89bb97061dd6a7ed882ec6b8ee53714c6f"
+dependencies = [
+ "shlex",
+]
 
 [[package]]
 name = "cfg-if"
@@ -22,12 +25,18 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
 name = "cmake"
-version = "0.1.50"
+version = "0.1.51"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a31c789563b815f77f4250caee12365734369f942439b7defd71e18a48197130"
+checksum = "fb1e43aa7fd152b1f968787f7dbcdeb306d1867ff373c69955211876c053f91a"
 dependencies = [
  "cc",
 ]
+
+[[package]]
+name = "cmk"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8fd5de2a10e31b3ec3e8d75e7ccf8281ab3ee55de68f7ab6ffa9e21be8d82f22"
 
 [[package]]
 name = "crossbeam-channel"
@@ -50,25 +59,33 @@ dependencies = [
 
 [[package]]
 name = "fltk"
-version = "1.4.20"
+version = "1.4.35"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b3acf0b0170990ce5543e07282ce4231182cd56f19dfd4fe8e1f3c546017e60f"
+checksum = "b01c29354c150d6b80a9ddf3fa5711a359c5de5d035bdb5359880a7e8d2b4024"
 dependencies = [
  "bitflags",
  "crossbeam-channel",
  "fltk-sys",
+ "once_cell",
  "paste",
  "ttf-parser",
 ]
 
 [[package]]
 name = "fltk-sys"
-version = "1.4.20"
+version = "1.4.35"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1fd92cd637a25f810e9feb54d12c1b58bfea010d1e1222fbbca6691d1995208c"
+checksum = "de79eda8e018209b50e62d409e41b68af76ba25162b799a116aec5e9c23d9aa8"
 dependencies = [
  "cmake",
+ "cmk",
 ]
+
+[[package]]
+name = "once_cell"
+version = "1.20.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1261fe7e33c73b354eab43b1273a57c8f967d0391e80353e51f764ac02cf6775"
 
 [[package]]
 name = "paste"
@@ -84,7 +101,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "ttf-parser"
-version = "0.20.0"
+name = "shlex"
+version = "1.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "17f77d76d837a7830fe1d4f12b7b4ba4192c1888001c7164257e4bc6d21d96b4"
+checksum = "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64"
+
+[[package]]
+name = "ttf-parser"
+version = "0.25.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5902c5d130972a0000f60860bfbf46f7ca3db5391eddfedd1b8728bd9dc96c0e"
