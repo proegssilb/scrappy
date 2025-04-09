@@ -27,7 +27,7 @@ jobs:
         path: target/release/scrappy
 
   windows:
-    runs-on: windows-2022
+    runs-on: windows-2025
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
       - name: Build
