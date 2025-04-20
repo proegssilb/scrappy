@@ -1,0 +1,25 @@
+import { TextEdit, VerticalBox } from "std-widgets.slint";
+
+export component AppWindow inherits Window {
+    MenuBar {
+        Menu {
+            title: @tr("File");
+            MenuItem {
+                title: @tr("Exit");
+                activated => { file-exit(); }
+            }
+        }
+    }
+
+    callback file-exit();
+
+    VerticalBox {
+        spacing: 0px;
+        padding: 0px;
+
+        TextEdit {
+            font-size: 14px;
+            text: "This is a long line, longer than the display can handle, so I'd want it to wrap\nAnd this is the line after it which I'd like to see starting on a new line and then wrapping on char boundary";
+        }
+    }
+}

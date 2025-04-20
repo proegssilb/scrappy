@@ -1,16 +1,7 @@
-#![windows_subsystem = "windows"]
+slint::include_modules!();
 
-use fltk::app::*;
+fn main() -> Result<(), slint::PlatformError> {
+    let ui = AppWindow::new()?;
 
-mod editorview;
-
-use editorview::EditorView;
-
-fn main() {
-    let app = App::default();
-    let mut view = EditorView::new();
-    view.initialize();
-    while app.wait() {
-        view.loop_step(app);
-    }
+    ui.run()
 }
