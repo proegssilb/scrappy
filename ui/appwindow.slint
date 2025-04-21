@@ -1,17 +1,78 @@
 import { TextEdit, VerticalBox } from "std-widgets.slint";
 
+export enum MenuCommand {
+    File_New,
+    File_Open,
+    File_Save,
+    File_SaveAs,
+    File_Quit,
+    Edit_Cut,
+    Edit_Copy,
+    Edit_Paste,
+    Edit_Find,
+    Edit_Replace,
+    Help_About
+}
+
 export component AppWindow inherits Window {
+    preferred-width: 400px;
+    preferred-height: 400px;
+
     MenuBar {
         Menu {
             title: @tr("File");
+
             MenuItem {
-                title: @tr("Exit");
-                activated => { file-exit(); }
+                title: @tr("New");
+                activated => { menu-click(MenuCommand.File_New); }
+            }
+            MenuItem {
+                title: @tr("Open...");
+                activated => { menu-click(MenuCommand.File_Open); }
+            }
+            MenuItem {
+                title: @tr("Save");
+                activated => { menu-click(MenuCommand.File_Save); }
+            }
+            MenuItem {
+                title: @tr("Save As...");
+                activated => { menu-click(MenuCommand.File_SaveAs); }
+            }
+            // TODO: Next slint release, see if this works.
+//            MenuSeperator {}
+            MenuItem {
+                title: @tr("Quit");
+                activated => { menu-click(MenuCommand.File_Quit); }
+            }
+        }
+        Menu {
+            title: @tr("Edit");
+
+            MenuItem {
+                title: @tr("Cut");
+                activated => { menu-click(MenuCommand.Edit_Cut); }
+            }
+            MenuItem {
+                title: @tr("Copy");
+                activated => { menu-click(MenuCommand.Edit_Copy); }
+            }
+            MenuItem {
+                title: @tr("Paste");
+                activated => { menu-click(MenuCommand.Edit_Paste); }
+            }
+        }
+        Menu {
+            title: @tr("Help");
+
+            MenuItem {
+                title: @tr("About");
+                activated => { menu-click(MenuCommand.Help_About); }
             }
         }
     }
 
     callback file-exit();
+    callback menu-click(MenuCommand);
 
     VerticalBox {
         spacing: 0px;
