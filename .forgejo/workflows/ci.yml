@@ -1,0 +1,125 @@
+name: CI
+
+# Forgejo Actions. Forgejo reads .forgejo/workflows/ and, because it exists,
+# ignores .github/workflows/ -- that directory is for the GitHub mirror only.
+#
+# Actions are referenced by full https://github.com/... URL: this instance's
+# default action source (data.forgejo.org) mirrors only a few of them. Every
+# third-party action is pinned to a commit SHA with its version in a trailing
+# comment; bump both together.
+#
+# Jobs run on runner01 (homelab-infra) in a catthehacker act-24.04 image under
+# the `ubuntu-latest` label. There is no Windows runner here; the Windows
+# build happens only on the GitHub mirror, at release time
+# (.github/workflows/release.yml).
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  # Build and test on Linux. fltk's `fltk-bundled` feature downloads a
+  # prebuilt FLTK, so no FLTK package is needed, only the X11/Wayland/Pango
+  # development libraries it links against.
+  check:
+    name: build, test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: https://github.com/actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install system libraries
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends \
+            libpango1.0-dev libx11-dev libxext-dev libxft-dev libxinerama-dev \
+            libxcursor-dev libxrender-dev libxfixes-dev libwayland-dev \
+            wayland-protocols libdbus-1-dev libxkbcommon-dev \
+            libgl1-mesa-dev libglu1-mesa-dev
+
+      - name: Install stable Rust
+        uses: https://github.com/dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+
+      - name: Cache cargo registry and build output
+        uses: https://github.com/Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+
+      - name: cargo build
+        run: cargo build --locked
+
+      - name: cargo test
+        run: cargo test --locked
+
+  # Static analysis for security bugs (what DevSkim did on GitHub): opengrep
+  # with the community Rust and GitHub-Actions-YAML rules. Fails on
+  # ERROR-severity findings only.
+  sast:
+    name: SAST (opengrep)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: https://github.com/actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Release binary, verified against the SHA-256 GitHub records for the
+      # v1.32.0 asset.
+      - name: Install opengrep
+        run: |
+          curl -sSfL -o "$RUNNER_TEMP/opengrep" \
+            https://github.com/opengrep/opengrep/releases/download/v1.32.0/opengrep_manylinux_x86
+          echo "7360d60174880bd9214f2dfbe439b7bce82b7a3d44cfe945ba833c85cc8bda75  $RUNNER_TEMP/opengrep" | sha256sum -c -
+          chmod +x "$RUNNER_TEMP/opengrep"
+
+      # Rules at a pinned commit of opengrep/opengrep-rules.
+      - name: Fetch rules
+        run: |
+          git init --quiet "$RUNNER_TEMP/rules"
+          git -C "$RUNNER_TEMP/rules" fetch --quiet --depth 1 \
+            https://github.com/opengrep/opengrep-rules f1d2b562b414783763fd02a6ed2736eaed622efa
+          git -C "$RUNNER_TEMP/rules" checkout --quiet FETCH_HEAD
+
+      - name: opengrep scan
+        run: |
+          R="$RUNNER_TEMP/rules"
+          "$RUNNER_TEMP/opengrep" scan --error --severity ERROR \
+            --config "$R/rust" --config "$R/yaml/github-actions" \
+            .
+
+  # Credentials committed by mistake (what GitHub's secret scanning did).
+  # Scans exactly the commits this push or PR adds, so a finding names the
+  # commit that introduced it.
+  secrets:
+    name: secret scan (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: https://github.com/actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install gitleaks
+        run: |
+          cd "$RUNNER_TEMP"
+          curl -sSfLO https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz
+          curl -sSfLO https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_checksums.txt
+          grep ' gitleaks_8.30.1_linux_x64.tar.gz$' gitleaks_8.30.1_checksums.txt | sha256sum -c -
+          tar xzf gitleaks_8.30.1_linux_x64.tar.gz gitleaks
+
+      - name: Scan new commits
+        env:
+          BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          if [ -z "$BASE_SHA" ] || [ "$BASE_SHA" = "0000000000000000000000000000000000000000" ]; then
+            RANGE="HEAD~1..HEAD"
+          else
+            RANGE="$BASE_SHA..HEAD"
+          fi
+          echo "Scanning $RANGE"
+          "$RUNNER_TEMP/gitleaks" git --redact --no-banner --log-opts="$RANGE" .

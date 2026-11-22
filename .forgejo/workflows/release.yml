@@ -1,0 +1,86 @@
+# Publishes a release on a version tag, on Forgejo: a Linux x86_64 binary
+# attached to a Forgejo release.
+#
+# The public side is separate. Forgejo push-mirrors every ref to GitHub, and
+# the tag arriving there runs .github/workflows/release.yml, which builds
+# Linux and Windows binaries on GitHub's runners and publishes a GitHub
+# release. The two builds are independent: same source, not bit-identical.
+#
+# To release: set `version` in Cargo.toml, commit, then tag `vX.Y.Z` (a `-`
+# in the tag, like v0.2.0-beta.1, marks a pre-release) and push the tag.
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      # Full history: the release notes list commits since the previous tag.
+      - uses: https://github.com/actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install system libraries
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends \
+            libpango1.0-dev libx11-dev libxext-dev libxft-dev libxinerama-dev \
+            libxcursor-dev libxrender-dev libxfixes-dev libwayland-dev \
+            wayland-protocols libdbus-1-dev libxkbcommon-dev \
+            libgl1-mesa-dev libglu1-mesa-dev
+
+      - name: Install stable Rust
+        uses: https://github.com/dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+
+      - name: Check the tag matches Cargo.toml
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          version=$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[0].version')
+          if [ "v$version" != "$TAG" ]; then
+            echo "::error::Tag $TAG does not match Cargo.toml version $version"
+            exit 1
+          fi
+
+      - name: Build
+        run: |
+          cargo build --release --locked
+          mkdir -p dist
+          install -s target/release/scrappy dist/scrappy-x86_64-unknown-linux-gnu
+          (cd dist && sha256sum scrappy-x86_64-unknown-linux-gnu > scrappy-x86_64-unknown-linux-gnu.sha256)
+
+      - name: Create the Forgejo release
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          API: ${{ github.server_url }}/api/v1/repos/${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          prev=$(git describe --tags --abbrev=0 "${TAG}^" 2>/dev/null || true)
+          {
+            echo "## Changes${prev:+ since $prev}"
+            echo
+            git log --no-merges --format='- %s (%h)' ${prev:+"$prev.."}"$TAG"
+          } > notes.md
+          prerelease=false
+          case "$TAG" in *-*) prerelease=true ;; esac
+          id=$(jq -n --arg tag "$TAG" --rawfile body notes.md --argjson pre "$prerelease" \
+                 '{tag_name: $tag, name: $tag, body: $body, prerelease: $pre}' \
+               | curl -sSf -X POST -H "Authorization: token $TOKEN" \
+                   -H 'Content-Type: application/json' --data @- "$API/releases" \
+               | jq -r .id)
+          for f in dist/*; do
+            curl -sSf -X POST -H "Authorization: token $TOKEN" \
+              -F "attachment=@$f" "$API/releases/$id/assets?name=$(basename "$f")" > /dev/null
+            echo "attached $(basename "$f")"
+          done

@@ -1,0 +1,45 @@
+# Self-hosted Renovate: dependency update PRs on this Forgejo repository,
+# configured by renovate.json (14-day minimumReleaseAge, OSV vulnerability
+# alerts). It replaces both the Renovate GitHub App and Dependabot security
+# updates, which stay off on the GitHub mirror -- the push mirror would
+# delete their branches.
+#
+# Secrets:
+#   RENOVATE_TOKEN             Forgejo token of the renovate-bot account
+#                              (write on this repository): branches and PRs.
+#   RENOVATE_GITHUB_COM_TOKEN  Optional, recommended: a github.com token with
+#                              no scopes (read-only public access). Version
+#                              and digest lookups for github.com actions and
+#                              release notes; unauthenticated, GitHub allows
+#                              60 API requests an hour.
+name: renovate
+
+on:
+  schedule:
+    - cron: "23 * * * *"
+  workflow_dispatch:
+
+jobs:
+  renovate:
+    runs-on: ubuntu-latest
+    # Renovate's own image, pinned like any other dependency (tag + digest,
+    # at least 14 days old). Tools a manager needs (cargo, for Cargo.lock
+    # updates) are installed on demand inside it.
+    container:
+      image: ghcr.io/renovatebot/renovate:44.198.0@sha256:9ace7c60234605b242fa7edf44f77a70a17f3b0e963e8e969bd59341a5b4295d
+    timeout-minutes: 60
+    steps:
+      - name: renovate
+        env:
+          RENOVATE_PLATFORM: forgejo
+          RENOVATE_ENDPOINT: ${{ github.server_url }}/api/v1
+          RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+          RENOVATE_REPOSITORIES: ${{ github.repository }}
+          RENOVATE_GIT_AUTHOR: "renovate-bot <renovate-bot@noreply.xenrelay.com>"
+          # The repository already carries renovate.json; never open an
+          # onboarding PR, and do nothing on a repository without one.
+          RENOVATE_ONBOARDING: "false"
+          RENOVATE_REQUIRE_CONFIG: required
+          GITHUB_COM_TOKEN: ${{ secrets.RENOVATE_GITHUB_COM_TOKEN }}
+          LOG_LEVEL: info
+        run: renovate
